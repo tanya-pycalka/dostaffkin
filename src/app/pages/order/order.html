@@ -9,7 +9,7 @@
     </div>
     <div class="main-content">
 
-        <div class="main-route" [FromGroup]="routeForm">
+        <div class="main-route" [formGroup]="routeForm">
             <div class="main-block-title">Маршрут</div>
             <div class="main-fields">
                 <div class="main-field" id="fromField">
@@ -57,22 +57,22 @@
             </div>
         </div>
         <div class="main-calculate-block">
-            <button id="calc" class="button calculate-button" type="button" [disablet]="routeForm.invalid" (click)="calculate()">Рассчитать</button>
+            <button id="calc" class="button calculate-button" type="button" [disabled]="routeForm.invalid" (click)="calculate()">Рассчитать</button>
         </div>
         <div class="main-result" id="result">
             <div class="main-result-title">Расчеты вашего заказа</div>
             <div class="main-result-lines">
-                <div class="main-result-line"><span>Расстояние</span><span id="distanceValue">—</span></div>
-                <div class="main-result-line"><span>Доставим через</span><span id="durationValue">—</span></div>
-                <div class="main-result-line"><span>Тариф</span><span id="rateValue">—</span></div>
+                <div class="main-result-line"><span>Расстояние</span><span id="distanceValue">{{ calculationResult() ? calculationResult().distance + ' км' : '—' }}</span></div>
+                <div class="main-result-line"><span>Доставим через</span><span id="durationValue">{{ calculationResult() ? calculationResult().duration + ' дн.' : '—' }}</span></div>
+                <div class="main-result-line"><span>Тариф</span><span id="rateValue">{{ calculationResult() ? calculationResult().rate + ' ₽/км' : '—' }}</span></div>
             </div>
             <div class="main-price">
                 <div class="main-price-label">Итого</div>
-                <div class="main-price-value" id="totalValue">—</div>
+                <div class="main-price-value" id="totalValue">{{ calculationResult() ? calculationResult().total : '—' }}</div>
             </div>
         </div>
         <div class="main-order-box">
-            <div class="main-order-form" id="orderForm" [formGroup]="orderForm">
+            <div class="main-order-form" id="orderForm" [formGroup]="orderForm" [style.display]="orderId() ? 'none' :null">
                 <div class="main-order-title">Оформление доставки</div>
                 <div class="main-block-info-row">
                     <div class="main-block-title">Контакты</div>
@@ -91,15 +91,15 @@
                         <textarea id="comment" formControlName="comment" placeholder="Детали доставки и комментарии"></textarea>
                     </div>
                 </div>
-                <button id="submit" class="button main-submit-request" type="button" disabled>Отправить
+                <button id="submit" class="button main-submit-request" type="button" [disabled]="!calculationResult() || orderForm.invalid" (click)="submitOrder()">Отправить
                     заявку
                 </button>
             </div>
 
-            <div class="main-order-success" id="orderSuccess">
+            <div class="main-order-success" id="orderSuccess" [class.is-visible]="orderId()">
                 <div class="main-success-icon">✓</div>
                 <div class="main-success-title">Заявка отправлена!</div>
-                <div class="main-success-title">Номер отправления – <span id="orderId"></span></div>
+                <div class="main-success-title">Номер отправления – <span id="orderId">{{orderId()}}</span></div>
                 <div class="main-success-subtitle">Мы скоро свяжемся с вами</div>
             </div>
         </div>

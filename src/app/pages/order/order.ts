@@ -122,4 +122,31 @@ export class Order {
     this.calculationResult.set(null);
     alert('Не удалось построить маршрут. Проверьте адреса и выбранные параметры.');
   }
+
+  public submitOrder() {
+    const calculation = this.calculationResult();
+    if (!calculation) {
+      alert('Сначала рассчитайте стоимость, чтобы оформить заявку');
+      return;
+    }
+
+    if (this.orderForm.invalid) {
+      alert('Введите имя и корректный телефон');
+      return;
+    }
+
+    const { name, phone, comment } = this.orderForm.getRawValue();
+    const trimmedName = (name ?? '').trim();
+    const trimmedPhone = (phone ?? '').trim();
+    const trimmedComment = (comment ?? '').trim();
+
+    const payload = {
+      customer: { name: trimmedName, phone: trimmedPhone, comment: trimmedComment },
+      calculation: calculation,
+      createdAt: new Date().toISOString()
+    };
+
+    console.log(payload);
+    this.orderId.set(1);
+  }
 }
